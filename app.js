@@ -46,7 +46,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL,
-      message TEXT NOT NULL,
+      message TEXT,
       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -82,6 +82,22 @@ app.get('/clear-chat', (req, res) => {
         return;
       }
       res.status(200).send('Chat messages cleared');
+    });
+});
+
+app.get('/save', (req, res) => {
+    const {data} = req.query;
+    console.log("QUERY", req.query);
+    // Insert message into database (without sanitizing input, for XSS demo)
+    const query = 'INSERT INTO messages (username, message) VALUES (?, ?)';
+    db.run(query, ['root', data], function (err) {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Failed to save message');
+        return;
+      }
+      // io.emit('new message', { username, message });
+      res.status(200).send('Message saved');
     });
 });
 
