@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat App (XSS Demo)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+</head>
+
+<body>
+    <div class="step1">
+        <h1>Group Chat (XSS)</h1>
+        <h4>Enter your username to continue</h4>
+        <div class="input-container">
+            <div>
+                <input type="text" id="username" placeholder="Username" required class="input-username">
+            </div>
+            <div>
+                <button class="continue-btn" id="username-submit">Continue</button>
+            </div>
+        </div>
+    </div>
+    <div class="step2">
+        <h1>Simple Live Chat App (XSS Demo)</h1>
+
+        <div id="messages"></div>
+
+        <form id="chat-form">
+            <!-- <div>
+                <input type="text" id="username" placeholder="Username" required class="input-username">
+            </div> -->
+            <div class="send-message-wrapper">
+                <textarea id="message" placeholder="Type your message" required></textarea>
+                <button type="submit" class="submit-btn">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Connect to Socket.IO server
+        function initSocket(){
+            // Handle incoming chat messages
+            const socket = io();
+            socket.on('chat messages', (messages) => {
+                const messagesContainer = document.getElementById('messages');
+                messagesContainer.innerHTML = '';
+                messages.forEach(msg => {
+                    const msgElement = document.createElement('div');
+                    msgElement.classList.add('message');
+                    if (msg.username === window.username) {
+                        msgElement.classList.add('self-message');
+                    }
+                    else {
+                        msgElement.classList.add('group-message');
+                    }
+                    msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
+                    messagesContainer.appendChild(msgElement);
+                });
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+
+            // Handle new messages
+            socket.on('new message', (msg) => {
+                const messagesContainer = document.getElementById('messages');
+                const msgElement = document.createElement('div');
+                msgElement.classList.add('message');
+                // msgElement.innerHTML = `<strong>${msg.username}</strong>: ${msg.message}`;
+                if (msg.username === window.username) {
+                    msgElement.classList.add('self-message');
+                }
+                else {
+                    msgElement.classList.add('group-message');
+                }
+                msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
+                messagesContainer.appendChild(msgElement);
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+
+            // Handle form submission
+            document.getElementById('chat-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const username = window.username;
+                const message = document.getElementById('message').value;
+
+                // Send the new message to the server
+                socket.emit('new message', { username, message });
+
+                // Clear the message input
+                document.getElementById('message').value = '';
+            });
+        }
+
+        
+
+        document.getElementById('username-submit').addEventListener('click', function () {
+            const username = document.getElementById('username').value;
+            
+            if (username) {
+                document.querySelector('.step1').style.display = 'none';
+                document.querySelector('.step2').style.display = 'block';
+                window.username = username;
+
+                initSocket();
+            }
+            else {
+                alert('Please enter a username');
+            }
+        });
+    </script>
+</body>
+
+</html>

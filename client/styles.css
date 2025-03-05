@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 300px;
+}
+
+h1 {
+    padding: 0 20px;
+}
+
+#messages {
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+#chat-form {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: wheat;
+}
+
+.message {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 5px;
+}
+
+textarea {
+    width: 90%;
+    padding: 8px 4px;
+}
+
+.submit-btn {
+    padding: 4px 10px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.input-username {
+    margin-bottom: 10px;
+    padding: 4px;
+}
+
+.send-message-wrapper {
+    display: flex;
+}
+
+.step1 {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-direction: column;
+ text-align: center;
+ border: 1px solid #ddd;
+ width: 400px;
+ padding: 40px 100px;
+ margin: 50px auto;
+}
+
+.step1 h1 {
+    margin-bottom: 0;
+}
+
+.step1 h4 {
+    margin-bottom: 30px;
+}
+
+.step1 button {
+    width: 100%;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.input-container {
+
+}
+
+.step2 {
+    display: none;
+}
+
+.self-message {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.group-message {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.msg-user {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #aaa;
+    background-color: skyblue;
+    color: #000;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+}
+
+.group-message .msg-user {
+    background-color: skyblue;
+}
+
+.msg-msg {
+    margin: 5px;
+    background-color: #005C4B;
+    color: #fff;
+    padding: 5px 12px 5px 8px;
+    border-radius: 3px;
+    min-width: 150px;
+}
+
+.group-message .msg-msg {
+    background-color: #202C33;
+}
+
+.msg-username {
+    text-transform: lowercase;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
