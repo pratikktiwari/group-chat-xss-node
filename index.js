@@ -41,7 +41,7 @@ const db = new sqlite3.Database('./chat_app.db', (err) => {
   console.log('Connected to SQLite database.');
 });
 
-// Set up the table if it doesn't exist already
+// Set up tables
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS messages (
@@ -49,6 +49,15 @@ db.serialize(() => {
       username TEXT NOT NULL,
       message TEXT,
       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  db.run(`DROP TABLE IF EXISTS users`);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      username TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL
     )
   `);
 });
@@ -114,14 +123,45 @@ app.get('/save', (req, res) => {
     });
 });
 
-// Login endpoint — stores username in session
-app.post('/login', (req, res) => {
-  const { username } = req.body;
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
+// Signup endpoint — creates a new user
+app.post('/signup', (req, res) => {
+  const { name, username, password } = req.body;
+  if (!name || !username || !password) {
+    return res.status(400).json({ error: 'All fields are required' });
   }
-  req.session.username = username;
-  res.json({ username });
+
+  db.run('INSERT INTO users (name, username, password) VALUES (?, ?, ?)', [name, username, password], function (err) {
+    if (err) {
+      if (err.message.includes('UNIQUE constraint failed')) {
+        return res.status(409).json({ error: 'Username already exists' });
+      }
+      return res.status(500).json({ error: 'Failed to create account' });
+    }
+    res.json({ success: true });
+  });
+});
+
+// Login endpoint — authenticates existing user
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    req.session.username = username;
+    res.json({ username });
+  });
 });
 
 // Check current session — useful to verify session hijacking
@@ -130,6 +170,13 @@ app.get('/me', (req, res) => {
     return res.json({ username: req.session.username });
   }
   res.status(401).json({ error: 'Not logged in' });
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('connect.sid');
+    res.json({ success: true });
+  });
 });
 
 // When a new socket connects

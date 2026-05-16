@@ -48,7 +48,8 @@ textarea {
     display: flex;
 }
 
-.step1 {
+.step-signup,
+.step-login {
  display: flex;
  align-items: center;
  justify-content: center;
@@ -60,26 +61,94 @@ textarea {
  margin: 50px auto;
 }
 
-.step1 h1 {
+.step-signup h1,
+.step-login h1 {
     margin-bottom: 0;
 }
 
-.step1 h4 {
+.step-signup h4,
+.step-login h4 {
     margin-bottom: 30px;
 }
 
-.step1 button {
+.step-signup button,
+.step-login button {
     width: 100%;
     padding: 4px 10px;
     cursor: pointer;
+}
+
+.auth-switch {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+.auth-switch a {
+    color: #005C4B;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
 }
 
 .input-container {
 
 }
 
+.login-error {
+    color: red;
+    font-size: 13px;
+    margin-bottom: 10px;
+    min-height: 18px;
+}
+
 .step2 {
     display: none;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.top-bar h1 {
+    padding: 0;
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout-btn {
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: transparent;
+    color: #333;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #eee;
+}
+
+.logged-in-user {
+    background-color: #005C4B;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: capitalize;
 }
 
 .self-message {
