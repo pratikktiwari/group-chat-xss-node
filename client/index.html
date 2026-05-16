@@ -99,16 +99,38 @@
             const username = document.getElementById('username').value;
             
             if (username) {
-                document.querySelector('.step1').style.display = 'none';
-                document.querySelector('.step2').style.display = 'block';
-                window.username = username;
-
-                initSocket();
+                fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                })
+                .then(res => res.json())
+                .then(() => {
+                    document.querySelector('.step1').style.display = 'none';
+                    document.querySelector('.step2').style.display = 'block';
+                    window.username = username;
+                    initSocket();
+                })
+                .catch(err => console.error('Login failed:', err));
             }
             else {
                 alert('Please enter a username');
             }
         });
+
+        // Auto-login if session exists
+        fetch('/me')
+            .then(res => {
+                if (res.ok) return res.json();
+                throw new Error('Not logged in');
+            })
+            .then(data => {
+                document.querySelector('.step1').style.display = 'none';
+                document.querySelector('.step2').style.display = 'block';
+                window.username = data.username;
+                initSocket();
+            })
+            .catch(() => {});
     </script>
 </body>
 

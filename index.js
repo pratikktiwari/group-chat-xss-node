@@ -6,6 +6,7 @@ const socketIo = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
+const session = require('express-session');
 const sqlite3 = require('sqlite3').verbose(); // Import SQLite3
 
 dotenv.config();
@@ -61,6 +62,18 @@ app.use(express.static('public'));
 
 app.use(cors()); 
 
+// Session middleware — httpOnly is false so XSS can access document.cookie (intentional for demo)
+app.use(session({
+  secret: 'xss-demo-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: false,
+    secure: false,
+    sameSite: 'lax'
+  }
+}));
+
 // Create an HTTP server and pass it to Socket.IO
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
@@ -99,6 +112,24 @@ app.get('/save', (req, res) => {
       // io.emit('new message', { username, message });
       res.status(200).send('Message saved');
     });
+});
+
+// Login endpoint — stores username in session
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+  req.session.username = username;
+  res.json({ username });
+});
+
+// Check current session — useful to verify session hijacking
+app.get('/me', (req, res) => {
+  if (req.session && req.session.username) {
+    return res.json({ username: req.session.username });
+  }
+  res.status(401).json({ error: 'Not logged in' });
 });
 
 // When a new socket connects
