@@ -123,6 +123,15 @@ db.serialize(() => {
       db.run("INSERT INTO conversations (id, type, name, created_by) VALUES (1, 'group', 'Community', 'system')");
     }
   });
+
+  // Ensure all existing users are members of Community
+  db.all('SELECT username FROM users', (err, rows) => {
+    if (!err && rows) {
+      rows.forEach((r) => {
+        db.run('INSERT OR IGNORE INTO conversation_members (conversation_id, username) VALUES (1, ?)', [r.username]);
+      });
+    }
+  });
 });
 
 // Middleware to parse JSON and form data
@@ -226,6 +235,62 @@ app.get('/clear', (req, res) => {
           return;
         }
         res.status(200).send('All data cleared');
+      });
+    });
+});
+
+app.get('/reset-db', (req, res) => {
+    // Delete uploaded files
+    if (fs.existsSync(uploadsDir)) {
+      fs.readdirSync(uploadsDir).forEach((file) => {
+        fs.unlinkSync(path.join(uploadsDir, file));
+      });
+    }
+    db.serialize(() => {
+      db.run('DROP TABLE IF EXISTS messages');
+      db.run('DROP TABLE IF EXISTS conversation_members');
+      db.run('DROP TABLE IF EXISTS last_read');
+      db.run('DROP TABLE IF EXISTS conversations');
+      db.run('DROP TABLE IF EXISTS users');
+      // Recreate all tables with current schema
+      db.run(`CREATE TABLE conversations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT NOT NULL DEFAULT 'group',
+        name TEXT,
+        created_by TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+      db.run(`CREATE TABLE conversation_members (
+        conversation_id INTEGER NOT NULL,
+        username TEXT NOT NULL,
+        PRIMARY KEY (conversation_id, username)
+      )`);
+      db.run(`CREATE TABLE messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        conversation_id INTEGER NOT NULL DEFAULT 1,
+        username TEXT NOT NULL,
+        message TEXT,
+        image_url TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
+      db.run(`CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+      )`);
+      db.run(`CREATE TABLE last_read (
+        username TEXT NOT NULL,
+        conversation_id INTEGER NOT NULL,
+        last_read_message_id INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (username, conversation_id)
+      )`);
+      db.run("INSERT INTO conversations (id, type, name, created_by) VALUES (1, 'group', 'Community', 'system')", (err) => {
+        if (err) {
+          res.status(500).send('Failed to reset database');
+          return;
+        }
+        res.status(200).send('Database fully reset with fresh schema');
       });
     });
 });
